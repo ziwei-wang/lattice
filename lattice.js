@@ -151,7 +151,7 @@ function init(){
 		.attr('type','range')
 		.attr('min',1)
 		.attr('max',50)
-		.on('input', function(){
+		.on('input',function(){
 			mass_2 = this.value;
 			svg.selectAll('.dot').remove();
 			g.selectAll('.dot').remove();
@@ -314,7 +314,6 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 
 			.transition().duration(1/freq*500)
 			.attr('cx',function(d) {return xloc(+d.n+d.amp2)})
-			.on('end',repeat)
 
 		circles2
 			.transition().duration(1/freq*500)
