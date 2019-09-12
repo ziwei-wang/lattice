@@ -6,7 +6,7 @@ var margin = {top: 50, right: 50, bottom: 50, left: 100},
 var mass_rat;
 var spri_rat;
 var pi = Math.PI;
-var colorMap = d3.scaleSequential(d3.interpolateGreys).domain([0, 0.5]);
+var colorMap = d3.scaleSequential(d3.interpolateReds).domain([0, 0.5]);
 var minArea;
 //console.log(math.acos(-1.5))
 //var d=math.conj(math.multiply(2,math.acos(1-(1*2*math.pow(3,4)-2*(1+2)*math.pow(3,2))/2)))
