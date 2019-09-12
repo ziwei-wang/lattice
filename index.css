@@ -1,11 +1,11 @@
 body {
 	font-size: 25px;
 	font-family: sans-serif;
-	.topimg {
- 	 width: 700px;
-	}
 }
 
+.topimg {
+ 	width: 700px;
+}
 
 .axis path,
 .axis line {
