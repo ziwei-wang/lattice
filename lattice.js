@@ -1,7 +1,7 @@
 // define the size of the svg
 var margin = {top: 50, right: 50, bottom: 50, left: 100},
 	width = 300;// - margin.left - margin.right,
-	height = 500;// - margin.top - margin.bottom;
+	height = 400;// - margin.top - margin.bottom;
 
 var mass_rat;
 var spri_rat;
@@ -29,7 +29,7 @@ function init(){
 	.attr("height", height + margin.top + margin.bottom)
 	.attr("align",'center')
 	.append("g")
-		.style("font","20px times")
+		.style("font","25px times")
 		.attr('id','spotSVG')
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -40,7 +40,7 @@ function init(){
 	var yloc = d3.scaleLinear().domain([0, pi]).range([height,0]);
 
 	var xAxis = d3.axisBottom(x)
-					.tickValues([0,math.pi/2]);
+					.tickValues([]);
 	var yAxis = d3.axisLeft(y);
 	var title = d3.axisTop(x)
 					.tickValues([]);
@@ -85,8 +85,9 @@ function init(){
 
     var key = d3.select("#container")
       .append("svg")
-      .attr("width", w)
-      .attr("height", h);
+      .attr("width", w+40)
+      .attr("height", h+20)
+      .attr('align','right');
 
     var legend = key.append("defs")
       .append("svg:linearGradient")
@@ -96,21 +97,44 @@ function init(){
       .attr("x2", "100%")
       .attr("y2", "100%")
       .attr("spreadMethod", "pad");
+
     legend.append("stop")
       .attr("offset", "0%")
-      .attr("stop-color", "#fff")
+      .attr("stop-color", colorMap(+0.0))
       .attr("stop-opacity", 1);
 
     legend.append("stop")
       .attr("offset", "100%")
-      .attr("stop-color", "#000")
+      .attr("stop-color", colorMap(+0.5))
       .attr("stop-opacity", 1);
-	
+
 	key.append("rect")
       .attr("width", w)
-      .attr("height", h - 30)
-      .style("fill", "Red")
-      .attr("transform", "translate(0,10)");
+      .attr("height", h-30)
+      .style("fill", "url(#gradient)")
+      .attr("transform", "translate(10,10)");
+
+    var yleg = d3.scaleLinear()
+      .range([w, 0])
+      .domain([1, 0]);
+
+    var yAxisleg = d3.axisBottom()
+      .scale(yleg)
+      .ticks(1);
+
+    key.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + 10 + "," + 30 + ")")
+      .call(yAxisleg)
+      .append("text")
+      .attr('class','label')
+      .attr("y", 5)
+      .attr("x", w/2)
+      .attr("dy", ".71em")
+      .style("text-anchor", "center")
+      .text("Displacement");
+
+
 
 
 /*	g.append("g")
@@ -223,9 +247,7 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 		.attr('r',2)
 		.attr('cx', function(d) {return x(+d.x); })
 		.attr('cy', function(d) {return y(+d.y); })
-		.style('fill', function(d) {
-			return colorMap(+d.l);
-		})
+		.style('fill','black')
 	var lineAnc=[{"x": 0, "y":freq}, {"x":3,"y":freq}];
 	var lineFunc = d3.line()
 						.x(function(d) {return x(+d.x);})
