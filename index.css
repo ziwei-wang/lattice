@@ -1,0 +1,28 @@
+body {
+	font-size: 25px;
+	font-family: sans-serif;
+}
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+
+}
+.axis {
+	font: 18px sans-serif;
+}
+.label {
+	font: 18px sans-serif;
+}
+
+.dot {
+	/*stroke: #000;*/
+}
+.label{
+	fill:black;
+	font-size:20px;
+}
+.hidden {
+	display:none;
+}
