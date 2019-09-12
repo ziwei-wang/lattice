@@ -180,7 +180,7 @@ function init(){
 			d3.selectAll('.back').remove();
 			plotDispersion(x,y,mass_1,mass_2,freq);
 			plotMotion(xloc,yloc,mass_1,mass_2,freq);
-		},100))
+		},1000))
 	slider.append('label')	
 	.attr('for','freq')
 	.style('display','inline-block')
