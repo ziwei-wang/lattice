@@ -2,6 +2,10 @@ body {
 	font-size: 25px;
 	font-family: sans-serif;
 }
+.top-img {
+  width: 250px;
+}
+
 .axis path,
 .axis line {
 	fill: none;
