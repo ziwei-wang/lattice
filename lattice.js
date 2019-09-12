@@ -173,6 +173,7 @@ function init(){
 		.attr('min',1)
 		.attr('max',50)
 		.on('drag', _.debounce(function(){
+			d3.interrupt();
 			freq= this.value;
 			svg.selectAll('.dot').remove();
 			d3.selectAll('.dot').remove();
