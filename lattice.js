@@ -105,6 +105,13 @@ function init(){
       .attr("offset", "100%")
       .attr("stop-color", "#000")
       .attr("stop-opacity", 1);
+	
+	key.append("rect")
+      .attr("width", w)
+      .attr("height", h - 30)
+      .style("fill", "Red")
+      .attr("transform", "translate(0,10)");
+
 
 /*	g.append("g")
 		.attr("class", "x axis")
