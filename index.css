@@ -16,7 +16,14 @@ body {
 	stroke: red;
 	stroke-width:2px;
 }
-
+.legend line,
+.legend path{
+	fill:none;
+	stroke:none;
+}
+.legend {
+	font: 20px sans-serif;
+}
 .axis path,
 .axis line {
 	fill: none;

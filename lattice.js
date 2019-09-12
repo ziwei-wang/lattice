@@ -13,7 +13,7 @@ function init(){
 	var mass_1=25;
 	var mass_2=25;
 	var svg = d3.select("#container").append("svg")
-	.attr("width", width + margin.left + margin.right)
+	.attr("width", width + margin.left + margin.right-20)
 	.attr("height", height + margin.top + margin.bottom)
 	.attr('align','right')
 	.append("g")
@@ -24,11 +24,11 @@ function init(){
 	var g = d3.select("#container").append("svg")
 	.attr("width", 1.5*width + margin.left + margin.right)
 	.attr("height", height + margin.top + margin.bottom)
-	.attr("align",'center')
+	.attr("align",'left')
 	.append("g")
 		.style("font","25px times")
 		.attr('id','spotSVG')
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+		.attr("transform", "translate(" + 0 + "," + margin.top + ")");
 
 	var x = d3.scaleLinear().domain([0, pi/2]).range([0, width]);
 	var y = d3.scaleLinear().domain([0, pi]).range([height, 0]);
@@ -36,14 +36,19 @@ function init(){
 	var xloc = d3.scaleLinear().domain([0, 20]).range([0, 1.5*width]);
 	var yloc = d3.scaleLinear().domain([0, pi]).range([height,0]);
 
+	var legend_scale = d3.scaleLinear().domain([-0.01, 1.01]).range([0, 1.5*width]);
+
 	var xAxis = d3.axisBottom(x)
 					.tickValues([]);
 	var yAxis = d3.axisLeft(y);
 	var title = d3.axisTop(x)
 					.tickValues([]);
 
-	var xlocAxis = d3.axisBottom(xloc);
+	var xlocAxis = d3.axisBottom(xloc)
 	var ylocAxis = d3.axisLeft(yloc);
+	var legendAxis = d3.axisBottom(legend_scale)
+						.tickValues([0,1])
+						.tickFormat(d3.format("d"));
 
 	svg.append("g")
 		.attr("class", "x axis")
@@ -69,7 +74,7 @@ function init(){
 		.text("Dimensionless Frequency")
 
 	svg.append('g')
-		.attr('class','title')
+		.attr('class','title axis')
 		.call(title)
 		.append('text')
 		.attr("class", "label")
@@ -77,59 +82,17 @@ function init(){
 		.attr('y',-30)
 		.style('text-anchor','center')
 		.text('Dispersion')
+	g.append('text')
+	.attr('class','label')
+	.attr('x',xloc(+7))
+	.attr('y',yloc(pi+0.25))
+	.style("text-anchor", "center")
+    .text("Displacement");
 
-	var w = 300, h = 50;
-
-    var key = d3.select("#container")
-      .append("svg")
-      .attr("width", w+40)
-      .attr("height", h+20)
-      .attr('align','right');
-
-    var legend = key.append("defs")
-      .append("svg:linearGradient")
-      .attr("id", "gradient")
-      .attr("x1", "0%")
-      .attr("y1", "100%")
-      .attr("x2", "100%")
-      .attr("y2", "100%")
-      .attr("spreadMethod", "pad");
-
-    legend.append("stop")
-      .attr("offset", "0%")
-      .attr("stop-color", colorMap(+0.0))
-      .attr("stop-opacity", 1);
-
-    legend.append("stop")
-      .attr("offset", "100%")
-      .attr("stop-color", colorMap(+0.5))
-      .attr("stop-opacity", 1);
-
-	key.append("rect")
-      .attr("width", w)
-      .attr("height", h-30)
-      .style("fill", "url(#gradient)")
-      .attr("transform", "translate(10,10)");
-
-    var yleg = d3.scaleLinear()
-      .range([w, 0])
-      .domain([1, 0]);
-
-    var yAxisleg = d3.axisBottom()
-      .scale(yleg)
-      .ticks(1);
-
-    key.append("g")
-      .attr("class", "y axis")
-      .attr("transform", "translate(" + 10 + "," + 30 + ")")
-      .call(yAxisleg)
-      .append("text")
-      .attr('class','label')
-      .attr("y", 5)
-      .attr("x", w/2)
-      .attr("dy", ".71em")
-      .style("text-anchor", "center")
-      .text("Displacement");
+    g.append("g")
+		.attr("class", "legend")
+		.attr("transform", "translate(0," + yloc(pi)+ ")")
+		.call(legendAxis)
 
 
 
@@ -216,6 +179,18 @@ function init(){
 	.html('Freq:<span id="freq-value"></span>')
 
 
+	/*var svg=d3.select('#spotSVG');
+
+	svg.append('rect')
+	.attr('class','back')
+	.attr('width',xloc(+20))
+	.attr('height',xloc(+1))
+	.attr('x',0)
+	.attr('y',yloc(1)-xloc(+1)/2)
+	.style('fill','#202578')
+	.style('opacity','0.5');*/
+
+
 	plotDispersion(x,y,mass_1,mass_2,freq)
 	plotMotion(xloc,yloc,mass_1,mass_2,freq)
 
@@ -266,17 +241,31 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 
 
 	//frequency indicator
-	var lineAnc=[{"x": 0, "y":freq}, {"x":3,"y":freq}];
+	var lineAnc=[{"x": 0, "y":freq}, {"x":1.7,"y":freq}];
 	var lineFunc = d3.line()
 						.x(function(d) {return x(+d.x);})
 						.y(function(d) {return y(+d.y);})
 
+	svg.append('svg:defs').append('svg:marker')
+		.attr('id','arrowhead')
+		.attr('refX',6)
+		.attr('refY',6)
+		.attr("markerWidth", 12)
+    	.attr("markerHeight", 12)
+    	.attr('viewBox','0 0 12 12')
+    	.attr("orient", "auto")
+    	.append('path')
+    	.style("fill", "black")
+    	.attr('d','M 0 0 12 6 0 12 3 6')
 
 	svg.append('path')
 		.attr('d', lineFunc(lineAnc))
 		.attr('class','freq_line')
 		.attr('stroke','black')
 		.attr('stroke-width',1)
+		.attr("marker-end","url(#arrowhead)");
+
+
 	d3.select("#mass1-value").text(mass_1)
 	d3.select("#mass2-value").text(mass_2)
 
@@ -339,6 +328,8 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 		return colorMap(+Math.abs(d.amp1));
 		})
 
+
+
 	repeat();
 
 	d3.select("#freq-value").text(freq)
@@ -359,6 +350,58 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 			.attr('cx',function(d) {return xloc(+d.n+d.amp2)})
 			.on('end',repeat)
 	}
+	
+
+    var legend = svg.append("defs")
+      .append("svg:linearGradient")
+      .attr("id", "gradient")
+      .attr("x1", "0%")
+      .attr("y1", "100%")
+      .attr("x2", "100%")
+      .attr("y2", "100%")
+      .attr("spreadMethod", "pad");
+
+    legend.append("stop")
+      .attr("offset", "0%")
+      .attr("stop-color", colorMap(+0.0))
+      .attr("stop-opacity", 1);
+
+    legend.append("stop")
+      .attr("offset", "100%")
+      .attr("stop-color", colorMap(+0.5))
+      .attr("stop-opacity", 1);
+
+	svg.append('rect')
+	.attr('class','back')
+	.attr('width',xloc(+20))
+	.attr('height',xloc(+1))
+	.attr('x',0)
+	.attr('y',yloc(pi+0.2))
+	.style('fill','url(#gradient)')
+	.style('opacity','1')
+
+
+
+
+/*    var yleg = d3.scaleLinear()
+      .range([w, 0])
+      .domain([1, 0]);
+
+    var yAxisleg = d3.axisBottom()
+      .scale(yleg)
+      .ticks(1);
+
+    key.append("g")
+      .attr("class", "y axis")
+      .attr("transform", "translate(" + 10 + "," + 30 + ")")
+      .call(yAxisleg)
+      .append("text")
+      .attr('class','label')
+      .attr("y", 5)
+      .attr("x", w/2)
+      .attr("dy", ".71em")
+      .style("text-anchor", "center")
+      .text("Displacement");*/
 }
 
 //runs on load
