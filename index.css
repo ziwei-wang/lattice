@@ -6,6 +6,16 @@ body {
 .topimg {
  	width: 500px;
 }
+.line-a {
+	fill: none;
+	stroke: steelblue;
+	stroke-width:2px;
+}
+.line-o {
+	fill: none;
+	stroke: red;
+	stroke-width:2px;
+}
 
 .axis path,
 .axis line {

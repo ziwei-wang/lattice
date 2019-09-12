@@ -8,9 +8,6 @@ var spri_rat;
 var pi = Math.PI;
 var colorMap = d3.scaleSequential(d3.interpolateReds).domain([0, 0.5]);
 var minArea;
-//console.log(math.acos(-1.5))
-//var d=math.conj(math.multiply(2,math.acos(1-(1*2*math.pow(3,4)-2*(1+2)*math.pow(3,2))/2)))
-//console.log(d.re)
 function init(){
 	var freq=1;
 	var mass_1=25;
@@ -159,6 +156,8 @@ function init(){
 			svg.selectAll('.dot').remove();
 			g.selectAll('.dot').remove();
 			d3.selectAll('.back').remove();
+			svg.selectAll('.line-a').remove();
+			svg.selectAll('.line-o').remove();
 			plotDispersion(x,y,mass_1,mass_2,freq);
 			plotMotion(xloc,yloc,mass_1,mass_2,freq);
 		})
@@ -180,6 +179,8 @@ function init(){
 			svg.selectAll('.dot').remove();
 			g.selectAll('.dot').remove();
 			d3.selectAll('.back').remove();
+			svg.selectAll('.line-a').remove();
+			svg.selectAll('.line-o').remove();
 			plotDispersion(x,y,mass_1,mass_2,freq);
 			plotMotion(xloc,yloc,mass_1,mass_2,freq);
 		})
@@ -202,6 +203,8 @@ function init(){
 			d3.selectAll('.dot').remove();
 			svg.selectAll('.freq_line').remove();
 			d3.selectAll('.back').remove();
+			svg.selectAll('.line-a').remove();
+			svg.selectAll('.line-o').remove();
 			plotDispersion(x,y,mass_1,mass_2,freq);
 			plotMotion(xloc,yloc,mass_1,mass_2,freq);
 		})
@@ -225,6 +228,7 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 	mass_1=mass_1/25;
 	mass_2=mass_2/25;
 
+	//dispersion calculation, data1:acoustic branch, data2:optical branch
 	var data1 = d3.range(0,pi/2,0.01).map(function(v){
 	return {
 		x:v,
@@ -241,23 +245,38 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 	});
 	var data = data1.concat(data2)
 
-	svg.selectAll('.dot').data(data).enter()
+	//dispersion curve plot
+	/*svg.selectAll('.dot').data(data).enter()
 		.append('circle')
 		.attr('class','dot')
 		.attr('r',2)
 		.attr('cx', function(d) {return x(+d.x); })
 		.attr('cy', function(d) {return y(+d.y); })
-		.style('fill','black')
+		.style('fill','black')*/
+	svg.append('path')
+		.data([data1])
+		.attr('class','line-a')
+		.attr('d',d3.line().x(function(d) {return x(+d.x)})
+							.y(function(d) {return y(+d.y)}))
+	svg.append('path')
+		.data([data2])
+		.attr('class','line-o')
+		.attr('d',d3.line().x(function(d) {return x(+d.x)})
+							.y(function(d) {return y(+d.y)}))
+
+
+	//frequency indicator
 	var lineAnc=[{"x": 0, "y":freq}, {"x":3,"y":freq}];
 	var lineFunc = d3.line()
 						.x(function(d) {return x(+d.x);})
 						.y(function(d) {return y(+d.y);})
 
+
 	svg.append('path')
 		.attr('d', lineFunc(lineAnc))
 		.attr('class','freq_line')
-		.attr('stroke','blue')
-		.attr('stroke-width',2)
+		.attr('stroke','black')
+		.attr('stroke-width',1)
 	d3.select("#mass1-value").text(mass_1)
 	d3.select("#mass2-value").text(mass_2)
 
@@ -269,13 +288,9 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	mass_1=mass_1/25;
 	mass_2=mass_2/25;
 	var svg=d3.select('#spotSVG');
-	//var wnum = Math.acos(1-freq*freq/2);//monatomic lattice
 	var wnum = math.multiply(math.acos(1+(mass_1*mass_2*math.pow(freq,4)-2*(mass_1+mass_2)*math.pow(freq,2))/2),2);
-	//wnum =math.conj(wnum);
 	if (wnum.im<0)
 		wnum = math.conj(wnum);
-	//console.log(wnum)
-	console.log(freq)
 	var data1=d3.range(1,20,2).map(function(v){
 		return {
 			n:v,
@@ -292,6 +307,7 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 			amp2:-0.5*math.pow(math.e,math.multiply(math.multiply(wnum,v),math.complex(0,1))).re
 		};
 	});
+
 	svg.append('rect')
 	.attr('class','back')
 	.attr('width',xloc(+20))
@@ -326,8 +342,6 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	repeat();
 
 	d3.select("#freq-value").text(freq)
-
-
 
 	function repeat() {
 		circles1
