@@ -1,6 +1,6 @@
 // define the size of the svg
 var margin = {top: 50, right: 50, bottom: 50, left: 100},
-	width = 500;// - margin.left - margin.right,
+	width = 300;// - margin.left - margin.right,
 	height = 500;// - margin.top - margin.bottom;
 
 var mass_rat;
