@@ -83,7 +83,7 @@ function init(){
 
 	var w = 300, h = 50;
 
-    var key = d3.select("#legend1")
+    var key = d3.select("#container")
       .append("svg")
       .attr("width", w)
       .attr("height", h);
