@@ -172,7 +172,7 @@ function init(){
 		.attr('type','range')
 		.attr('min',1)
 		.attr('max',50)
-		.on('input', _.debounce(function(){
+		.on('input',function(){
 			freq= this.value;
 			svg.selectAll('.dot').remove();
 			d3.selectAll('.dot').remove();
@@ -180,7 +180,7 @@ function init(){
 			d3.selectAll('.back').remove();
 			plotDispersion(x,y,mass_1,mass_2,freq);
 			plotMotion(xloc,yloc,mass_1,mass_2,freq);
-		},500))
+		})
 	slider.append('label')	
 	.attr('for','freq')
 	.style('display','inline-block')
