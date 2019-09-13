@@ -9,9 +9,9 @@ var pi = Math.PI;
 var colorMap = d3.scaleSequential(d3.interpolateReds).domain([0, 0.5]);
 var minArea;
 function init(){
-	var freq=1;
-	var mass_1=25;
-	var mass_2=25;
+	var freq=8;
+	var mass_1=20;
+	var mass_2=1;
 	var svg = d3.select("#container").append("svg")
 	.attr("width", width + margin.left + margin.right-20)
 	.attr("height", height + margin.top + margin.bottom)
@@ -89,24 +89,58 @@ function init(){
 	.style("text-anchor", "center")
     .text("Displacement");
 
+    svg.append('rect')
+	.attr('class','legend')
+	.attr('width',x(+0.5))
+	.attr('height',y(+3.13))
+	.attr('x',x(+0.5))
+	.attr('y',y(+3))
+	.style('fill','red')
+	.style('opacity','1')
+	svg.append('text')
+	.attr('class','legend-text')
+	.attr('x',x(+1))
+	.attr('y',y(+2.95))
+	.style("text-anchor", "center")
+	.style('fill','red')
+    .text("Optical branch");
+
+    svg.append('rect')
+	.attr('class','legend')
+	.attr('width',x(+0.5))
+	.attr('height',y(+3.13))
+	.attr('x',x(+0.5))
+	.attr('y',y(+2.8))
+	.style('fill','blue')
+	.style('opacity','1')
+	svg.append('text')
+	.attr('class','legend-text')
+	.attr('x',x(+1))
+	.attr('y',y(+2.75))
+	.style("text-anchor", "center")
+	.style('fill','blue')
+    .text("Acoustic branch");
+
+    svg.append('rect')
+	.attr('class','legend')
+	.attr('width',x(+0.5))
+	.attr('height',y(+3.05))
+	.attr('x',x(+0.5))
+	.attr('y',y(+2.65))
+	.style('fill','grey')
+	.style('opacity','0.5')
+	svg.append('text')
+	.attr('class','legend-text')
+	.attr('x',x(+1))
+	.attr('y',y(+2.55))
+	.style("text-anchor", "center")
+	.style('fill','grey')
+    .text("Bandgap");
+
     g.append("g")
 		.attr("class", "legend")
 		.attr("transform", "translate(0," + yloc(pi)+ ")")
 		.call(legendAxis)
-
-
-
-
-/*	g.append("g")
-		.attr("class", "x axis")
-		.attr("transform", "translate(0," + (10+height/2) + ")")
-		.call(xlocAxis)
-	.append("text")
-		.attr("class", "label")
-		.attr("x", width -20)
-		.attr("y", 30)
-		.style("text-anchor", "end")
-		.text("");*/
 
 	var slider = d3.select('#container').append('div')
 	slider.append('input')
@@ -116,6 +150,7 @@ function init(){
 		.attr('max',50)
 		.on('input', function(){
 			mass_1 = this.value;
+			mass_2 = 1;
 			svg.selectAll('.dot').remove();
 			g.selectAll('.dot').remove();
 			d3.selectAll('.back').remove();
@@ -129,37 +164,14 @@ function init(){
 	.style('display','inline-block')
 	.style('width','240px')
 	.style('text-align','left')
-	.html('Mass_1:<span id="mass1-value"></span>')
-
-	var slider = d3.select('#container').append('div')
-	slider.append('input')
-		.attr('id','mass2')
-		.attr('type','range')
-		.attr('min',1)
-		.attr('max',50)
-		.on('input',function(){
-			mass_2 = this.value;
-			svg.selectAll('.dot').remove();
-			g.selectAll('.dot').remove();
-			d3.selectAll('.back').remove();
-			svg.selectAll('.line-a').remove();
-			svg.selectAll('.line-o').remove();
-			plotDispersion(x,y,mass_1,mass_2,freq);
-			plotMotion(xloc,yloc,mass_1,mass_2,freq);
-		})
-	slider.append('label')
-	.attr('for','mass2')
-	.style('display','inline-block')
-	.style('width','240px')
-	.style('text-align','left')
-	.html('Mass_2:<span id="mass2-value"></span>')
+	.html('\\(m_1/m_2\\): <span id="mass1-value"></span>')
 
 	var slider = d3.select('#container').append('div')
 	slider.append('input')
 		.attr('id','freq')
 		.attr('type','range')
-		.attr('min',1)
-		.attr('max',50)
+		.attr('min',0)
+		.attr('max',24)
 		.on('input',function(){
 			freq= this.value;
 			svg.selectAll('.dot').remove();
@@ -176,32 +188,16 @@ function init(){
 	.style('display','inline-block')
 	.style('width','240px')
 	.style('text-align','left')
-	.html('Freq:<span id="freq-value"></span>')
-
-
-	/*var svg=d3.select('#spotSVG');
-
-	svg.append('rect')
-	.attr('class','back')
-	.attr('width',xloc(+20))
-	.attr('height',xloc(+1))
-	.attr('x',0)
-	.attr('y',yloc(1)-xloc(+1)/2)
-	.style('fill','#202578')
-	.style('opacity','0.5');*/
-
+	.html('\\(f\\): <span id="freq-value"></span>')
 
 	plotDispersion(x,y,mass_1,mass_2,freq)
 	plotMotion(xloc,yloc,mass_1,mass_2,freq)
-
-
 }
 
 function plotDispersion(x,y,mass_1,mass_2,freq){
 	var svg = d3.select('#lineSVG');
-	freq=freq/25;
-	mass_1=mass_1/25;
-	mass_2=mass_2/25;
+	freq=freq/10;
+	mass_1=mass_1/20+0.5;
 
 	//dispersion calculation, data1:acoustic branch, data2:optical branch
 	var data1 = d3.range(0,pi/2,0.01).map(function(v){
@@ -220,14 +216,6 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 	});
 	var data = data1.concat(data2)
 
-	//dispersion curve plot
-	/*svg.selectAll('.dot').data(data).enter()
-		.append('circle')
-		.attr('class','dot')
-		.attr('r',2)
-		.attr('cx', function(d) {return x(+d.x); })
-		.attr('cy', function(d) {return y(+d.y); })
-		.style('fill','black')*/
 	svg.append('path')
 		.data([data1])
 		.attr('class','line-a')
@@ -238,8 +226,6 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 		.attr('class','line-o')
 		.attr('d',d3.line().x(function(d) {return x(+d.x)})
 							.y(function(d) {return y(+d.y)}))
-
-
 	//frequency indicator
 	var lineAnc=[{"x": 0, "y":freq}, {"x":1.7,"y":freq}];
 	var lineFunc = d3.line()
@@ -258,6 +244,15 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
     	.style("fill", "black")
     	.attr('d','M 0 0 12 6 0 12 3 6')
 
+    svg.append('rect')
+	.attr('class','back')
+	.attr('width',x(+data1[data1.length-1].x))
+	.attr('height',y(+data1[data1.length-1].y)-y(+data2[data2.length-1].y))
+	.attr('x',0)
+	.attr('y',y(+data2[data2.length-1].y))
+	.style('fill','grey')
+	.style('opacity','0.5')
+
 	svg.append('path')
 		.attr('d', lineFunc(lineAnc))
 		.attr('class','freq_line')
@@ -267,33 +262,31 @@ function plotDispersion(x,y,mass_1,mass_2,freq){
 
 
 	d3.select("#mass1-value").text(mass_1)
-	d3.select("#mass2-value").text(mass_2)
 
 
 }
 
 function plotMotion(xloc,yloc,mass_1,mass_2,freq){
-	freq = freq/25;
-	mass_1=mass_1/25;
-	mass_2=mass_2/25;
+	freq = freq/10;
+	mass_1=mass_1/20+0.5;
 	var svg=d3.select('#spotSVG');
-	var wnum = math.multiply(math.acos(1+(mass_1*mass_2*math.pow(freq,4)-2*(mass_1+mass_2)*math.pow(freq,2))/2),2);
+	var wnum = math.multiply(math.acos(1+(mass_1*mass_2*math.pow(freq,4)-2*(mass_1+mass_2)*math.pow(freq,2))/2),0.5);
+	var u1 = 0.5;
+	var u2 = u1*(1+math.exp(math.multiply(math.complex(0,1),2,wnum)).re)/(2-mass_2*freq*freq);
 	if (wnum.im<0)
 		wnum = math.conj(wnum);
 	var data1=d3.range(1,20,2).map(function(v){
 		return {
 			n:v,
 			y:freq,
-			amp1:0.5*math.pow(math.e,math.multiply(math.multiply(wnum,v),math.complex(0,1))).re,
-			amp2:-0.5*math.pow(math.e,math.multiply(math.multiply(wnum,v),math.complex(0,1))).re
+			amp:u1*math.exp(math.multiply(wnum,(v-1)/2,math.complex(0,1),2)).re,
 		};
 	});
 	var data2=d3.range(2,20,2).map(function(v){
 		return {
 			n:v,
 			y:freq,
-			amp1:0.5*math.pow(math.e,math.multiply(math.multiply(wnum,v),math.complex(0,1))).re,
-			amp2:-0.5*math.pow(math.e,math.multiply(math.multiply(wnum,v),math.complex(0,1))).re
+			amp:u2*math.exp(math.multiply(wnum,v/2-1,math.complex(0,1),2)).re,
 		};
 	});
 
@@ -313,7 +306,7 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	.attr('cx',function(d) {return xloc(+d.n)})
 	.attr('cy',function(d) {return yloc(+d.y)})
 	.style('fill',function(d){
-		return colorMap(+Math.abs(d.amp1));
+		return colorMap(+Math.abs(d.amp));
 		})
 	
 
@@ -325,7 +318,7 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	.attr('cx',function(d) {return xloc(+d.n)})
 	.attr('cy',function(d) {return yloc(+d.y)})
 	.style('fill',function(d){
-		return colorMap(+Math.abs(d.amp1));
+		return colorMap(+Math.abs(d.amp));
 		})
 
 
@@ -337,17 +330,17 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	function repeat() {
 		circles1
 			.transition().duration(1/freq*500)
-			.attr('cx',function(d) {return xloc(+d.n+d.amp1)})
+			.attr('cx',function(d) {return xloc(+d.n+d.amp)})
 
 			.transition().duration(1/freq*500)
-			.attr('cx',function(d) {return xloc(+d.n+d.amp2)})
+			.attr('cx',function(d) {return xloc(+d.n-d.amp)})
 
 		circles2
 			.transition().duration(1/freq*500)
-			.attr('cx',function(d) {return xloc(+d.n+d.amp1)})
+			.attr('cx',function(d) {return xloc(+d.n+d.amp)})
 
 			.transition().duration(1/freq*500)
-			.attr('cx',function(d) {return xloc(+d.n+d.amp2)})
+			.attr('cx',function(d) {return xloc(+d.n-d.amp)})
 			.on('end',repeat)
 	}
 	
@@ -379,29 +372,6 @@ function plotMotion(xloc,yloc,mass_1,mass_2,freq){
 	.attr('y',yloc(pi+0.2))
 	.style('fill','url(#gradient)')
 	.style('opacity','1')
-
-
-
-
-/*    var yleg = d3.scaleLinear()
-      .range([w, 0])
-      .domain([1, 0]);
-
-    var yAxisleg = d3.axisBottom()
-      .scale(yleg)
-      .ticks(1);
-
-    key.append("g")
-      .attr("class", "y axis")
-      .attr("transform", "translate(" + 10 + "," + 30 + ")")
-      .call(yAxisleg)
-      .append("text")
-      .attr('class','label')
-      .attr("y", 5)
-      .attr("x", w/2)
-      .attr("dy", ".71em")
-      .style("text-anchor", "center")
-      .text("Displacement");*/
 }
 
 //runs on load
